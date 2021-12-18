@@ -23,8 +23,9 @@ contract Reward {
     event Staked(address staker, uint _amount, uint time);
     event Unstaked(address unstaker, uint _amount, uint time);
 
-    constructor() public {
+    constructor(address _rewardTokenAddress) public {
         owner = msg.sender;
+        IERC20 Gigs = IERC20(_rewardTokenAddress);
     }
 
     function stake(uint _amount, address _token) public payable {
@@ -52,7 +53,7 @@ contract Reward {
         require(addressToNextRewardTime[_receiver] < block.timestamp, "Rewards already sent");
         addressToHodlTime[_receiver] = addressToUnstakeTime[_receiver] - addressToStakeTime[msg.sender];
         require(addressToHodlTime[_receiver] > oneWeek, "You aren't eligible yet");
-        IERC20(DAI).transfer(_receiver, addressToBalance[_receiver].div(10));
+        IERC20(Gigs).transfer(_receiver, addressToBalance[_receiver].div(10));
         addressToNextRewardTime[_receiver] = block.timestamp + oneMonth;
         emit Rewarded(_receiver, block.timestamp, block.timestamp + oneMonth);
     }
